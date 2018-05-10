@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Geolocation API</title>
+</head>
+<body>
+    <h1>Hello, lets trace your location.</h1>
+    <button onclick="getLocation()">Get Location</button>
+    <!--Output will go here-->
+    <div id="output"></div>
+    <script src="http://code.jquery.com/jquery-2.2.4.min.js">
+    </script>
+    <script>
+        var x=document.getElementById('output');
+        function getLocation(){
+            if(navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(showPosition,showError); 
+            }else{
+                x.innerHTML="Browser not Supporting";
+            }
+        }
+
+        function showPosition(position){
+            // x.innerHTML = "Latitide = "+position.coords.latitude;
+            // x.innerHTML +="</br>";
+            // x.innerHTML += "Longitude = "+position.coords.longitude;
+            var locAPI = "http://maps.googleapis.com/maps/api/geocode/json?latlng="+position.coords.latitude+","+position.coords.longitude+"&sensor=true";
+           
+           $.get({
+                url: locAPI,
+                success:function(data){
+                    console.log(data);
+                    x.innerHTML = data.results[0].formatted_address;
+                }
+           });
+        }
+
+        function showError(error){
+            switch(error.code){
+                case error.PERMISSION_DENIED :
+                alert("User dont want to share location");
+                break;
+                
+                case error.POSITION_UNAVAILABLE :
+                alert("User location is not available");
+                break;
+                
+                case error.TIMEOUT :
+                alert("TIMEOUT ..!!");
+                break;
+                
+                case error.UNKNOWN_ERROR :
+                alert("There is something unknown error");
+                break;
+            }
+        }
+    </script>
+</body>
+</html>
